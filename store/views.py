@@ -335,7 +335,10 @@ class UploadProductImageView(APIView):
         product = Product.objects.get(id=product_id)
 
         ProductImage.objects.create(
-            product=product, image=request.FILES.get("image"), alt_text=product.title
+            product=product,
+            image=request.FILES.get("image"),
+            alt_text=product.title,
+            is_feature=data["is_feature"],
         )
 
         return Response(
