@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -17,6 +17,8 @@ from .serializers import *
 
 
 class CSRFTokenView(APIView):
+    """Generate CSRF Token"""
+
     permission_classes = (AllowAny,)
 
     def get(self, request):
@@ -25,8 +27,9 @@ class CSRFTokenView(APIView):
         return response
 
 
-class RegistrationAPIView(APIView):
-    # Allow any user (authenticated or not) to hit this endpoint.
+class RegistrationAPIView(generics.GenericAPIView):
+    """Register a new user using this endpoint."""
+
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
 
@@ -51,7 +54,9 @@ class RegistrationAPIView(APIView):
         )
 
 
-class LoginAPIView(APIView):
+class LoginAPIView(generics.GenericAPIView):
+    """Login an existing user using this endpoint."""
+
     permission_classes = (AllowAny,)
     # renderer_classes = (UserJSONRenderer,)
     serializer_class = LoginSerializer
@@ -92,6 +97,8 @@ class WhoAmIView(APIView):
 
 
 class UserProfileView(APIView):
+    """Get user profile details."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
@@ -104,6 +111,8 @@ class UserProfileView(APIView):
 
 
 class UpdateUserProfileView(APIView):
+    """Update user profile details."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
@@ -126,6 +135,8 @@ class UpdateUserProfileView(APIView):
 
 
 class UserListView(APIView):
+    """Get a list of users."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = UserSerializer
@@ -138,6 +149,8 @@ class UserListView(APIView):
 
 
 class GetUserByIdView(APIView):
+    """Get user details by id."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = UserSerializer
@@ -150,6 +163,8 @@ class GetUserByIdView(APIView):
 
 
 class UpdateUserView(APIView):
+    """Update user details by id."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = UserSerializer
@@ -171,6 +186,8 @@ class UpdateUserView(APIView):
 
 
 class DeleteUserView(APIView):
+    """Delete user by id."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 

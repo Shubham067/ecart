@@ -12,7 +12,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     # Ensure email is required and unique.
     email = serializers.EmailField(
-        required=True,
+        required=False,
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),
@@ -23,7 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     # Ensure username is required and unique.
     username = serializers.CharField(
-        required=True,
+        required=False,
         validators=[
             UniqueValidator(
                 queryset=User.objects.all(),
@@ -35,12 +35,39 @@ class RegistrationSerializer(serializers.ModelSerializer):
     # Ensure password is required, at least 8 characters long, no longer than 128
     # characters, and can not be read by the client.
     password = serializers.CharField(
-        required=True, max_length=128, min_length=8, write_only=True
+        required=False, max_length=128, min_length=8, write_only=True
     )
 
     # The client should not be able to send a token along with a registration
     # request. Making `token` read-only handles that for us.
     # token = serializers.CharField(max_length=255, read_only=True)
+
+    def validate(self, data):
+        # The `validate` method is where we make sure that the current
+        # instance of `RegistrationSerializer` is "valid". In the case of registering a
+        # user, this means validating that they've provided an email, username
+        # and password and that this combination doesn't match one of the users in
+        # our database.
+
+        email = data.get("email", None)
+        username = data.get("username", None)
+        password = data.get("password", None)
+
+        # Raise an exception if an email is not provided.
+        if email is None:
+            raise serializers.ValidationError(
+                "An email address is required to register."
+            )
+
+        # Raise an exception if a username is not provided.
+        if username is None:
+            raise serializers.ValidationError("A username is required to register.")
+
+        # Raise an exception if a password is not provided.
+        if password is None:
+            raise serializers.ValidationError("A password is required to register.")
+
+        return {"email": email, "username": username, "password": password}
 
     def create(self, validated_data):
         # Use the `create_user` helper method of the `User` model's custom Manager to create a new user.

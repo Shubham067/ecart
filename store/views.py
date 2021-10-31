@@ -16,11 +16,13 @@ from datetime import datetime
 
 
 class ProductListView(APIView):
+    """Get a list of all active products."""
+
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
 
     def get(self, request):
-        products = Product.objects.all()
+        products = Product.objects.filter(is_active=True)
 
         page = request.query_params.get("page")
         # print("----p", page)
@@ -53,11 +55,15 @@ class ProductListView(APIView):
 
 
 class TopProductListView(APIView):
+    """Get a list of top 5 active products."""
+
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
 
     def get(self, request):
-        products = Product.objects.filter(rating__gte=3).order_by("-rating")[0:5]
+        products = Product.objects.filter(is_active=True, rating__gte=3).order_by(
+            "-rating"
+        )[0:5]
 
         serializer = self.serializer_class(
             products, many=True, context={"request": request}
@@ -75,6 +81,8 @@ class TopProductListView(APIView):
 
 
 class ProductView(generics.RetrieveAPIView):
+    """Get individual product details based on slug."""
+
     lookup_field = "slug"
     queryset = Product.objects.all()
     permission_classes = (AllowAny,)
@@ -82,6 +90,8 @@ class ProductView(generics.RetrieveAPIView):
 
 
 class CategoryItemView(generics.ListAPIView):
+    """Get individual category details based on slug."""
+
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
 
@@ -94,6 +104,8 @@ class CategoryItemView(generics.ListAPIView):
 
 
 class CategoryListView(generics.ListAPIView):
+    """Get a list of categories."""
+
     queryset = Category.objects.filter(level=1)
     permission_classes = (AllowAny,)
     serializer_class = CategorySerializer
@@ -153,6 +165,8 @@ class AddOrderItemsView(APIView):
 
 
 class GetOrderHistoryView(APIView):
+    """Get a list of orders created by a particular user."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
@@ -171,6 +185,8 @@ class GetOrderHistoryView(APIView):
 
 
 class GetOrderByIdView(APIView):
+    """Get order details by id for a particular user."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = OrderSerializer
@@ -205,6 +221,8 @@ class GetOrderByIdView(APIView):
 
 
 class UpdateOrderToPaidView(APIView):
+    """Update 'is_paid' status of a particular order."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -222,6 +240,8 @@ class UpdateOrderToPaidView(APIView):
 
 
 class UpdateOrderToDeliveredView(APIView):
+    """Update 'is_delivered' status of a particular order."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
@@ -242,6 +262,8 @@ class UpdateOrderToDeliveredView(APIView):
 
 
 class DeleteProductView(APIView):
+    """Delete a particular product by id."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
@@ -260,6 +282,8 @@ class DeleteProductView(APIView):
 
 
 class CreateProductView(APIView):
+    """Create a new product."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = ProductSerializer
@@ -293,6 +317,8 @@ class CreateProductView(APIView):
 
 
 class UpdateProductView(APIView):
+    """Update a particular product details by id."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = ProductSerializer
@@ -324,6 +350,8 @@ class UpdateProductView(APIView):
 
 
 class UploadProductImageView(APIView):
+    """Upload product image."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
@@ -351,6 +379,8 @@ class UploadProductImageView(APIView):
 
 
 class GetOrdersView(APIView):
+    """Get a list of all orders."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = OrderSerializer
@@ -368,6 +398,8 @@ class GetOrdersView(APIView):
 
 
 class CreateProductReviewView(APIView):
+    """Create a review for a particular product."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
