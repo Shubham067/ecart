@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Prefetch
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,10 +23,16 @@ class ProductListView(APIView):
     serializer_class = ProductSerializer
 
     def get(self, request):
-        products = Product.objects.filter(is_active=True)
+        products = (
+            Product.objects.filter(is_active=True)
+            .select_related("product_type", "category", "created_by")
+            .prefetch_related(
+                "product_image", Prefetch("review_set", to_attr="reviews")
+            )
+        )
 
         page = request.query_params.get("page")
-        # print("----p", page)
+
         paginator = Paginator(products, 2)
 
         try:

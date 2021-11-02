@@ -28,17 +28,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     product_image = ImageSerializer(many=True, read_only=True)
-    reviews = serializers.SerializerMethodField(read_only=True)
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = "__all__"
         # exclude = ["created_at", "updated_at"]
-
-    def get_reviews(self, obj):
-        reviews = obj.review_set.all()
-        serializer = ReviewSerializer(reviews, many=True)
-        return serializer.data
 
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
