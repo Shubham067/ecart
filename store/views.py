@@ -91,7 +91,9 @@ class ProductView(generics.RetrieveAPIView):
     """Get individual product details based on slug."""
 
     lookup_field = "slug"
-    queryset = Product.objects.all()
+    queryset = Product.objects.all().prefetch_related(
+        "product_image", Prefetch("review_set", to_attr="reviews")
+    )
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
 
@@ -373,7 +375,7 @@ class UploadProductImageView(APIView):
             product=product,
             image=request.FILES.get("image"),
             alt_text=product.title,
-            is_feature=data["is_feature"],
+            is_feature=bool(data["is_feature"]),
         )
 
         return Response(

@@ -41,10 +41,10 @@ class TestProductsModel(TestCase):
         User.objects.create(username="admin")
         ProductType.objects.create(name="book")
         self.data1 = Product.objects.create(
-            product_type_id=6,
-            category_id=7,
+            product_type_id=11,
+            category_id=12,
             title="django stars",
-            created_by_id=2,
+            created_by_id=3,
             slug="django-stars",
             regular_price="20.99",
             discount_price="10.99",
@@ -73,3 +73,15 @@ class ProductsTestCase(APITestCase):
         # We expect the result in 4 queries
         with self.assertNumQueries(4):
             response = self.client.get(reverse("store:all_products"), format="json")
+
+    def test_list_top_products(self):
+        # Add dummy data to the Category and Product Table
+        seeder.add_entity(Category, 5)
+        seeder.add_entity(ProductType, 5)
+        seeder.add_entity(User, 1)
+        seeder.add_entity(Product, 10)
+        seeder.execute()
+
+        # We expect the result in 1 query
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse("store:top_products"), format="json")
