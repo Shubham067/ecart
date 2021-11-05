@@ -3,6 +3,10 @@ from mptt.admin import MPTTModelAdmin
 
 from .models import *
 
+admin.site.site_header = "Ecart Admin"
+admin.site.index_title = "Welcome to Ecart Admin"
+admin.site.site_title = "Ecart Admin"
+
 
 @admin.register(Category)
 class CategoryAdmin(MPTTModelAdmin):

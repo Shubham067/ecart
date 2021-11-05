@@ -37,7 +37,7 @@ class Category(MPTTModel):
         verbose_name_plural = _("Categories")
 
     def get_absolute_url(self):
-        return reverse("store:category_list", kwargs={"pk": self.pk})
+        return reverse("store:get_products_by_category", kwargs={"slug": self.slug})
 
     def __str__(self):
         return self.name
@@ -180,7 +180,7 @@ class Product(models.Model):
         ordering = ("-created_at",)
 
     def get_absolute_url(self):
-        return reverse("store:product_detail", args=[self.slug])
+        return reverse("store:get_individual_product", args=[self.slug])
 
     def __str__(self):
         return self.title
