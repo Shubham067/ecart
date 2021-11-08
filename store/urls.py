@@ -15,6 +15,7 @@ urlpatterns = [
     ),
     path("categories/", CategoryListView.as_view(), name="all_top_level_categories"),
     path("orders/", GetOrdersView.as_view(), name="get_all_orders_list"),
+    path("summary/", GetSummaryView.as_view(), name="get_summary_for_admin_dashboard"),
     path("orders/history/", GetOrderHistoryView.as_view(), name="get_order_history"),
     path(
         "products/<str:pk>/reviews/",

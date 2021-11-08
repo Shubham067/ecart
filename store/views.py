@@ -1,3 +1,4 @@
+import itertools
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Prefetch
@@ -14,6 +15,8 @@ from .models import *
 from . import models
 
 from datetime import datetime
+
+from itertools import groupby
 
 
 class ProductListView(APIView):
@@ -402,6 +405,45 @@ class GetOrdersView(APIView):
 
         return Response(
             {"orders": serializer.data, "status": status.HTTP_200_OK},
+            status=status.HTTP_200_OK,
+        )
+
+
+class GetSummaryView(APIView):
+    """Get data summary for admin dashboard."""
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminUser]
+    serializer_class = OrderSerializer
+
+    def get(self, request):
+        orders = Order.objects.all()
+        serializer = self.serializer_class(
+            orders, many=True, context={"request": request}
+        )
+        ordersCount = len(orders)
+        productsCount = Product.objects.count()
+        usersCount = User.objects.count()
+        ordersPrice = sum([item["total_price"] for item in serializer.data])
+
+        salesData = []
+        for key, value in groupby(serializer.data, key=lambda x: x["created_at"][:7]):
+            salesData.append(
+                {
+                    "id": key,
+                    "totalSales": sum([item["total_price"] for item in value]),
+                }
+            )
+
+        return Response(
+            {
+                "ordersCount": ordersCount,
+                "productsCount": productsCount,
+                "usersCount": usersCount,
+                "ordersPrice": ordersPrice,
+                "salesData": salesData,
+                "status": status.HTTP_200_OK,
+            },
             status=status.HTTP_200_OK,
         )
 
