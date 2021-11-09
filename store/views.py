@@ -1,5 +1,3 @@
-import itertools
-from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Prefetch
 
@@ -424,14 +422,14 @@ class GetSummaryView(APIView):
         ordersCount = len(orders)
         productsCount = Product.objects.count()
         usersCount = User.objects.count()
-        ordersPrice = sum([item["total_price"] for item in serializer.data])
+        ordersPrice = sum(item["total_price"] for item in serializer.data)
 
         salesData = []
         for key, value in groupby(serializer.data, key=lambda x: x["created_at"][:7]):
             salesData.append(
                 {
                     "id": key,
-                    "totalSales": sum([item["total_price"] for item in value]),
+                    "totalSales": sum(item["total_price"] for item in value),
                 }
             )
 
