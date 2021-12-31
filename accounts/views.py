@@ -50,6 +50,7 @@ class RegistrationAPIView(generics.GenericAPIView):
                 "status": status.HTTP_201_CREATED,
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "accessExpiresIn": int(refresh.access_token.lifetime.total_seconds()),
             }
         )
 
@@ -80,6 +81,7 @@ class LoginAPIView(generics.GenericAPIView):
                 "status": status.HTTP_200_OK,
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "accessExpiresIn": int(refresh.access_token.lifetime.total_seconds()),
             }
         )
 
