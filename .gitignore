@@ -134,6 +134,7 @@ dmypy.json
 .DS_Store
 \*.pem
 datadump.json
+*.png
 
 # Backup files
 *.bak
