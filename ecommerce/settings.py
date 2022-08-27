@@ -224,7 +224,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
 
-DATABASES["default"].update(dj_database_url.config(conn_max_age=600))
+DATABASES["default"].update(
+    dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+    )
+)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
